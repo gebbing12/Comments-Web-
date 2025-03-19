@@ -21,9 +21,6 @@ app.post("/comments", (req, res) => {
     const { text, image } = req.body;
     const author = 'Admin';
     const likes = 0;
-    if (!text || !image) {
-        return res.status(400).json({ error: "Not a valid comment" });
-    }
 
     fs.readFile(FILE_PATH, "utf8", (err, data) => {
         if (err) return res.status(500).json({ error: "Error reading file" });
@@ -43,7 +40,7 @@ app.post("/comments", (req, res) => {
         const jsonData = { comments };
         fs.writeFile(FILE_PATH, JSON.stringify(jsonData, null, 2), (err) => {
             if (err) return res.status(500).json({ error: "Error writing file" });
-            res.json(newComment);
+            res.json({ success: true });
         });
     });
 });
@@ -69,7 +66,32 @@ app.put("/comments/:id", (req, res) => {
         const jsonData = { comments };
         fs.writeFile(FILE_PATH, JSON.stringify(jsonData, null, 2), (err) => {
             if (err) return res.status(500).json({ error: "Error writing file" });
-            res.json(comments[index]);
+            res.json({ success: true });
+        });
+    });
+});
+
+// Update likes number
+app.put("/comments/likes/:id", (req, res) => {
+    const _id = req.params.id;
+    const { likes } = req.body;
+
+    fs.readFile(FILE_PATH, "utf8", (err, data) => {
+        if (err) return res.status(500).json({ error: "Error reading file" });
+
+        let comments = JSON.parse(data).comments;
+        const index = comments.findIndex(c => c.id == _id);
+
+        if (index === -1) {
+            return res.status(404).json({ error: "Comment not found" });
+        }
+
+        comments[index].likes = likes;
+
+        const jsonData = { comments };
+        fs.writeFile(FILE_PATH, JSON.stringify(jsonData, null, 2), (err) => {
+            if (err) return res.status(500).json({ error: "Error writing file" });
+            res.json({ success: true });
         });
     });
 });

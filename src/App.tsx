@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { fetchComments, deleteComment } from "./api.tsx";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import React from "react";
+import { BrowserRouter as Router, Switch, Route, Redirect} from "react-router-dom";
 import CommentList from "./comment-list.tsx"
 import CommentEdit  from "./comment-edit.tsx"
 import CommentAdd  from "./comment-add.tsx"
@@ -15,19 +14,15 @@ interface Comment {
 }
 
 const App = () => {
-    const [comments, setComments] = useState([]);
-
-    useEffect(() => {
-        fetchComments().then((response) => {
-            setComments(response|| []);
-        })
-    }, []);
 
     return (
     <Router>
         <Switch>
-            <Route exact path="/" component={() => <CommentList comments={comments} />} />
-            <Route exact path="/edit/:id" render={() => <CommentEdit/>}/>
+            <Route exact path="/" component={() => <CommentList/>} />
+            <Route exact path="/edit/:id" render={() => {
+                const username = localStorage.getItem("username");
+                return username === "Admin" ? <CommentEdit /> : <Redirect to="/" />}}
+            />
             <Route exact path="/add" component={CommentAdd} />
         </Switch>
     </Router>

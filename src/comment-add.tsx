@@ -6,11 +6,15 @@ const CommentAdd = () => {
     const history = useHistory();
     const [commentText, setCommentText] = useState('');
     const [commentImage, setCommentImage] = useState('');
+    const [error, setError] = useState('')
 
     const handleSave = () => {
+        if (!commentText){
+            setError('* Invalid text');
+            return
+        }
         addComment(commentText,commentImage).then(() => {
-            history.push("/");
-            window.location.reload();
+            history.goBack();
         });
     };
 
@@ -35,7 +39,9 @@ const CommentAdd = () => {
             /><br/>
             <br/>    
             <button onClick={handleSave}>Save</button>
+            {error && <p style={{ color: "red", margin:"0"}}>{error}</p>}
             </div>
+            
 
     );
 };

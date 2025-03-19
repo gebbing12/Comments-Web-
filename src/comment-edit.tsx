@@ -1,6 +1,6 @@
 import React, { useState, useEffect }  from "react";
 import { useHistory, useParams, useLocation } from "react-router-dom";
-import { fetchComments, updateComment } from "./api.tsx";
+import { updateComment } from "./api.tsx";
 
 const CommentEdit = () => {
     const history = useHistory();
@@ -12,8 +12,7 @@ const CommentEdit = () => {
 
     const handleSave = () => {
         updateComment(id, commentText, commentImage).then(() => {
-            history.push("/");
-            window.location.reload();
+            history.goBack();
         });
     };
 

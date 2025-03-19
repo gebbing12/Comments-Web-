@@ -10,7 +10,7 @@ Follow the steps below to set up and run the application locally.
 
 Ensure you have the following installed before proceeding:  
 - **Node.js** (Latest LTS version recommended)  
-- **npm** or **yarn** (for package management)  
+- **npm** (for package management)  
 
 ### 📦 Installing Dependencies  
 

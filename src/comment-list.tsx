@@ -1,12 +1,29 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import CommentItem from "./comment-item.tsx";
 import { useHistory } from "react-router-dom";
+import { fetchComments } from "./api.tsx";
 
-const CommentList = ({ comments }) => {
-    const [currentPage, setCurrentPage] = useState(1);
-    const commentsPerPage = 10;
-    const totalPages = Math.ceil(comments.length / commentsPerPage);
+const CommentList = () => {
     const history = useHistory();
+    const [comments, setComments] = useState([]);
+    const commentsPerPage = 10;
+    
+    const queryParams = new URLSearchParams(location.search);
+    const initialPage = Number(queryParams.get("page")) || 1;
+    const [currentPage, setCurrentPage] = useState(initialPage);
+
+    const totalPages = Math.ceil(comments.length / commentsPerPage);
+
+    useEffect(() => {
+        fetchComments().then((response) => {
+            setComments(response|| []);
+        })
+    }, []); 
+
+    useEffect(() => {
+        history.push(`/?page=${currentPage}`);
+    }, [currentPage]);
+
 
     const goToPreviousPage = () => {
         if (currentPage > 1) setCurrentPage(currentPage - 1);
