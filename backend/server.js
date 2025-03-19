@@ -6,13 +6,39 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const FILE_PATH = "../copy_of_comments.json";
+const FILE_PATH = "../comments2.json";
 
-// Get all comments
+// Get all comments and relationship
+// commentRelationship{
+//  'root':[{},{}] // first comments
+//     1:[{},{}] // comment1's reply
+// }
 app.get("/comments", (req, res) => {
     fs.readFile(FILE_PATH, "utf8", (err, data) => {
         if (err) return res.status(500).json({ error: "Error reading file" });
-        res.json(JSON.parse(data).comments);
+
+        let comments = JSON.parse(data).comments; 
+        let commentRelationship = {};
+        commentRelationship['root'] = []
+
+        for (let i = 0; i < comments.length; i++) {
+            let id = comments[i].id;
+            if (!comments[i].parent) {
+                commentRelationship['root'].push(comments[i]);
+            } else {
+                const parent = comments[i].parent;
+                if (!commentRelationship[parent]) {
+                    commentRelationship[parent] = [];
+                }
+                commentRelationship[parent].push(comments[i]);
+            }
+        }
+
+        const response = {
+            relationship: commentRelationship,
+        };
+
+        res.json(response);
     });
 });
 
